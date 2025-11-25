@@ -1,8 +1,295 @@
 [
-  {
-    "timestamp": "2025-11-25 09:34:49",
-    "tidur": 6.5,
-    "olahraga": "jogging",
-    "air": 9
-  }
+    {
+        "timestamp": "2025-11-25 08:10:35",
+        "tidur (jam)": 7.0,
+        "air (gelas)": 8,
+        "olahraga": "Jogging"
+    },
+    {
+        "timestamp": "2025-11-25 08:13:42",
+        "tidur": 4.5,
+        "air_minum": 7,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng 1 porsi",
+        "estimasi_kalori": "Tidak ditemukan"
+    },
+    {
+        "timestamp": "2025-11-25 08:13:43",
+        "tidur": 4.5,
+        "air_minum": 7,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng 1 porsi",
+        "estimasi_kalori": "Tidak ditemukan"
+    },
+    {
+        "timestamp": "2025-11-25 08:14:13",
+        "tidur": 4.5,
+        "air_minum": 7,
+        "olahraga": "jogging",
+        "makanan": "nasi ayam",
+        "estimasi_kalori": "Tidak ditemukan"
+    },
+    {
+        "timestamp": "2025-11-25 08:14:30",
+        "tidur": 4.5,
+        "air_minum": 17,
+        "olahraga": "jogging",
+        "makanan": "nasi ayam",
+        "estimasi_kalori": "Tidak ditemukan"
+    },
+    {
+        "timestamp": "2025-11-25 08:45:59",
+        "tidur": 10.5,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 08:47:48",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 08:48:21",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 08:55:50",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 08:56:06",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 08:56:57",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:06:38",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:08:12",
+        "tidur": 2.0,
+        "air": 3,
+        "olahraga": "Jogging",
+        "makanan": "nasi goreng",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:08:43",
+        "tidur": 2.5,
+        "air": 4,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:10:08",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:12:35",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": null,
+        "BMI": {
+            "message": "Invalid API key. Go to https://docs.rapidapi.com/docs/keys for more info."
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:15:06",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": null,
+        "BMI": {
+            "bmi": "27.897"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:17:12",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "27.897"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:18:18",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "27.897"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:18:47",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "27.897"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:19:19",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "27.897"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:19:33",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "27.897"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:19:53",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "16.876"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:19:59",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "15.146"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:21:22",
+        "tidur": 10.0,
+        "air": 8,
+        "olahraga": "jogging",
+        "makanan": "nasi goreng",
+        "kalori": "API Nutritionix belum dikonfigurasi",
+        "BMI": {
+            "bmi": "15.146"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:37:21",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "BMI": {
+            "bmi": "53.038"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:44:29",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "makanan_indonesia": "Rendang",
+        "BMI": {
+            "bmi": "85.684"
+        }
+    },
+    {
+        "timestamp": "2025-11-25 09:45:59",
+        "tidur": 0.0,
+        "air": 0,
+        "olahraga": "",
+        "makanan": "",
+        "kalori": null,
+        "makanan_indonesia": "Rendang",
+        "BMI": {
+            "bmi": "85.684"
+        }
+    }
 ]
