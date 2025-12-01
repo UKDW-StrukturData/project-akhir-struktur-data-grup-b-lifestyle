@@ -10,7 +10,7 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.stop()
 
 
-GEMINI_API_KEY = 'AIzaSyC-y5GaMufNfI7vxvqH82w_0gEqvdxu-gc'
+GEMINI_API_KEY = 'AIzaSyBYbNSnl2Rj8gHo01zYvmBBFVqx26whJiM'
 genai.configure(api_key=GEMINI_API_KEY)
 
 
