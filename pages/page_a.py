@@ -2,7 +2,7 @@ import streamlit as st
 import json
 import os
 from datetime import datetime
-import google.generativeai as genai   # SDK Gemini AI terbaru
+import google-generativeai as genai   # SDK Gemini AI terbaru
 
 
 if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
