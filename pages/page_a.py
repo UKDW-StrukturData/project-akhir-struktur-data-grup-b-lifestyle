@@ -9,19 +9,15 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.warning("Silakan login terlebih dahulu!")
     st.stop()
 
-# st.title("Cek Gejala penyakit anda")
-# st.header("Ini menggunaka Gen AI gemini untuk cek penyakit anda")
 
 
-# --- Konfigurasi Gemini AI ---
-# Pastikan kamu sudah menyimpan API_KEY sebagai variabel lingkungan
-GEMINI_API_KEY = 'AIzaSyBX8Mh-2pnAFHVFjdj1e33ZWUahLagL5J0'
+GEMINI_API_KEY = 'AIzaSyC-y5GaMufNfI7vxvqH82w_0gEqvdxu-gc'
 genai.configure(api_key=GEMINI_API_KEY)
 
-# Model Gemini
-model = genai.GenerativeModel("gemini-2.5-flash")   # gunakan model stabil
 
-# --- Fungsi untuk pemanggilan Gemini AI ---
+model = genai.GenerativeModel("gemini-2.5-flash")
+
+
 def diagnose_gejala(gejala_list):
     prompt = (
         f"Saya mengalami gejala berikut: {', '.join(gejala_list)}.\n"
@@ -29,10 +25,10 @@ def diagnose_gejala(gejala_list):
         "Berikan kemungkinan dan saran tindakan awal secara ringkas dan mudah dipahami."
     )
 
-    response = model.generate_content(prompt)   # cara baru pemanggilan API
+    response = model.generate_content(prompt) 
     return response.text
 
-# --- Fungsi untuk menyimpan data health tracker dan mood ---
+
 def save_data(data, filename):
     if os.path.exists(filename):
         with open(filename, "r") as f:
@@ -50,15 +46,13 @@ def load_data(filename):
             return json.load(f)
     return []
 
-# --- Layout Streamlit ---
+
 st.title("WarasNesia — Diagnosa Penyakit dan Kesehatan")
-# st.subheader("Ini menggunaka Gen AI gemini untuk cek penyakit anda")
+
 
 menu = st.sidebar.selectbox("Menu", ["Diagnosis Gejala", "Health Tracker", "Mood Tracking"])
 
-# ---------------------------------------------
-# FITUR: DIAGNOSIS GEJALA
-# ---------------------------------------------
+
 if menu == "Diagnosis Gejala":
     st.header("Diagnosis Awal Berdasarkan Gejala")
     gejala_input = st.text_area("Masukkan gejala (pisahkan dengan koma):")
@@ -72,9 +66,7 @@ if menu == "Diagnosis Gejala":
         else:
             st.warning("Silakan masukkan minimal satu gejala.")
 
-# ---------------------------------------------
-# FITUR: HEALTH TRACKER
-# ---------------------------------------------
+
 elif menu == "Health Tracker":
     st.header("Catat Aktivitas Harian")
     tidur = st.number_input("Jam tidur (jam):", min_value=0.0, max_value=24.0, step=0.5)
@@ -96,9 +88,7 @@ elif menu == "Health Tracker":
     riwayat = load_data("health_tracker.json")
     st.write(riwayat)
 
-# ---------------------------------------------
-# FITUR: MOOD TRACKING
-# ---------------------------------------------
+
 elif menu == "Mood Tracking":
     st.header("Catat Mood Harian")
     mood = st.selectbox("Bagaimana suasana hati Anda hari ini?", ["Sangat Buruk", "Buruk", "Netral", "Baik", "Sangat Baik"])
