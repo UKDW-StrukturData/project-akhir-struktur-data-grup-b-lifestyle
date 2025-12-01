@@ -10,12 +10,11 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.stop()
 
 
-
 GEMINI_API_KEY = 'AIzaSyC-y5GaMufNfI7vxvqH82w_0gEqvdxu-gc'
 genai.configure(api_key=GEMINI_API_KEY)
 
 
-model = genai.GenerativeModel("gemini-2.5-flash")
+model = genai.GenerativeModel("gemini-2.5-flash") 
 
 
 def diagnose_gejala(gejala_list):
@@ -25,7 +24,7 @@ def diagnose_gejala(gejala_list):
         "Berikan kemungkinan dan saran tindakan awal secara ringkas dan mudah dipahami."
     )
 
-    response = model.generate_content(prompt) 
+    response = model.generate_content(prompt)
     return response.text
 
 
