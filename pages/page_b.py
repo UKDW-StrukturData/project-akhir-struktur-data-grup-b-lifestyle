@@ -59,19 +59,6 @@ def hitung_kalori(makanan):
         return "Error API"
 
 
-def analisis_makanan_indonesia(id_makanan):
-    url = f"https://ind-nutrient-api1.p.rapidapi.com/food/{id_makanan}"
-    headers = {
-        "x-rapidapi-key": RAPIDAPI_KEY,
-        "x-rapidapi-host": "ind-nutrient-api1.p.rapidapi.com"
-    }
-    try:
-        response = requests.get(url, headers=headers)
-        return response.json()
-    except Exception as e:
-        return {"error": str(e)}
-
-
 def save_health_data(data, filename="health_tracker.json"):
     try:
         with open(filename, "r") as f:
@@ -90,17 +77,6 @@ tidur = st.number_input("Durasi tidur (jam)", 0.0, 24.0, step=0.5)
 air = st.number_input("Jumlah air minum (gelas)", 0, 50)
 olahraga = st.text_input("Aktivitas olahraga")
 makanan = st.text_input("Konsumsi makanan (contoh: nasi goreng 1 porsi)")
-
-
-st.write("---")
-st.subheader("Analisis Nutrisi Makanan Khas Indonesia")
-food_options = {
-    "Nasi Goreng": "6677f7a0bb4ac7511c067c30",
-    "Rendang": "6677f80cbb4ac7511c067c31",
-    "Sate Ayam": "6677f8afbb4ac7511c067c32",
-    "Gado-Gado": "6677f94ebb4ac7511c067c33"
-}
-pilihan_makanan_indonesia = st.selectbox("Pilih makanan lokal:", list(food_options.keys()))
 
 
 st.write("---")
