@@ -91,17 +91,12 @@ lbs = berat_kg * 2.20462
 # Submit
 if st.button("Simpan & Analisis"):
     bmi_data = hitung_bmi(feet, inches, lbs)
-    kalori = hitung_kalori(makanan) if makanan else None
-    nutrisi_makanan = analisis_makanan_indonesia(food_options[pilihan_makanan_indonesia])
 
     data = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "tidur": tidur,
         "air": air,
         "olahraga": olahraga,
-        "makanan": makanan,
-        "kalori": kalori,
-        "makanan_indonesia": pilihan_makanan_indonesia,
         "BMI": bmi_data
     }
     save_health_data(data)
