@@ -4,17 +4,15 @@ import os
 from datetime import datetime
 import google.generativeai as genai   # SDK Gemini AI terbaru
 
-
 if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.warning("Silakan login terlebih dahulu!")
     st.stop()
 
+token = st.session_state['api']
+genai.configure(api_key=token)
 
-GEMINI_API_KEY = 'AIzaSyBYbNSnl2Rj8gHo01zYvmBBFVqx26whJiM'
-genai.configure(api_key=GEMINI_API_KEY)
 
-
-model = genai.GenerativeModel("gemini-2.5-flash") 
+model = genai.GenerativeModel("gemini-2.5-flash")
 
 
 def diagnose_gejala(gejala_list):
