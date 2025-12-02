@@ -76,7 +76,6 @@ st.title("Health Tracker Harian + BMI & Nutrisi 🇮🇩")
 tidur = st.number_input("Durasi tidur (jam)", 0.0, 24.0, step=0.5)
 air = st.number_input("Jumlah air minum (gelas)", 0, 50)
 olahraga = st.text_input("Aktivitas olahraga")
-makanan = st.text_input("Konsumsi makanan (contoh: nasi goreng 1 porsi)")
 
 
 st.write("---")
@@ -117,17 +116,6 @@ if st.button("Simpan & Analisis"):
             st.write(f" **BMI:** {bmi_data['bmi']}")
         st.write(f"Konversi tinggi: {tinggi_cm} cm → {feet} ft {inches} in")
         st.write(f"Berat: {berat_kg} kg → {lbs:.1f} lbs")
-
-
-    if nutrisi_makanan and "name" in nutrisi_makanan:
-        st.write("Nutrisi Makanan Khas Indonesia")
-        st.write(f"**Nama:** {nutrisi_makanan.get('name', '-')}")
-        st.write(f"**Kalori:** {nutrisi_makanan.get('calorie', '-')}")
-        st.write(f"**Protein:** {nutrisi_makanan.get('protein', '-')} g")
-        st.write(f"**Karbohidrat:** {nutrisi_makanan.get('carbohydrate', '-')} g")
-        st.write(f"**Lemak:** {nutrisi_makanan.get('fat', '-')} g")
-    else:
-        st.warning("Nutrisi tidak ditemukan.")
 
 
     st.write("---")
