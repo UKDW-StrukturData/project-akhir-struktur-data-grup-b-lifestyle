@@ -2,17 +2,14 @@ import streamlit as st
 from datetime import datetime
 import pandas as pd
 import sqlite3
-from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
-from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import getSampleStyleSheet
-from reportlab.lib import colors
 
 
 # ==============================
-#  DATABASE (TANPA FILE BARU)
+#  DATABASE
 # ==============================
 def get_conn():
     return sqlite3.connect("users.db")
+
 
 def init_db():
     conn = get_conn()
@@ -20,218 +17,67 @@ def init_db():
     cur.execute("""
         CREATE TABLE IF NOT EXISTS mood_history (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            tanggal TEXT,
-            skor INTEGER,
-            mood TEXT,
+            date TEXT NOT NULL,
+            mood TEXT NOT NULL,
             notes TEXT
         )
     """)
     conn.commit()
-    conn.close()
 
-def insert_mood(tanggal, skor, mood, notes):
+init_db()
+
+
+# ==============================
+#   FUNGSI CRUD
+# ==============================
+def add_mood(mood, notes):
     conn = get_conn()
     cur = conn.cursor()
-    cur.execute("""
-        INSERT INTO mood_history (tanggal, skor, mood, notes)
-        VALUES (?, ?, ?, ?)
-    """, (tanggal, skor, mood, notes))
+    cur.execute(
+        "INSERT INTO mood_history (date, mood, notes) VALUES (?, ?, ?)",
+        (datetime.now().strftime("%Y-%m-%d %H:%M:%S"), mood, notes)
+    )
     conn.commit()
-    conn.close()
 
-def load_mood():
+
+def get_moods():
     conn = get_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT tanggal, skor, mood, notes FROM mood_history ORDER BY id DESC")
-    rows = cur.fetchall()
-    conn.close()
-    return rows
+    df = pd.read_sql_query("SELECT * FROM mood_history ORDER BY id DESC", conn)
+    return df
 
 
 # ==============================
-# STREAMLIT PAGE CONFIG
+#          UI
 # ==============================
-st.set_page_config(
-    page_title="WarasNesia - Mood Tracker",
-    layout="wide"
-)
+st.title("📘 Mood Harian")
 
-init_db()  # penting!
+st.subheader("Input Mood")
+mood = st.selectbox("Pilih mood:", ["Senang", "Sedih", "Stress", "Tenang", "Capek"])
+notes = st.text_area("Catatan")
 
+if st.button("Simpan"):
+    add_mood(mood, notes)
+    st.success("Mood berhasil disimpan!")
 
-# ==============================
-# LOAD DATABASE KE SESSION_STATE
-# ==============================
-db_rows = load_mood()
-
-st.session_state.mood_history = [
-    {"Tanggal": r[0], "Skor": r[1], "Mood": r[2], "Catatan": r[3]}
-    for r in db_rows
-]
+st.subheader("Riwayat Mood")
+df = get_moods()
+st.dataframe(df)
 
 
 # ==============================
-# MOOD OPTIONS
+#       EXPORT TANPA PDF
 # ==============================
-MOOD_OPTIONS = {
-    1: "😔 Sangat Buruk",
-    2: "😟 Buruk",
-    3: "😐 Biasa Saja",
-    4: "🙂 Baik",
-    5: "😊 Sangat Baik"
-}
-mood_list = list(MOOD_OPTIONS.keys())
+st.subheader("Export Data")
 
+# CSV
+csv_data = df.to_csv(index=False).encode("utf-8")
+st.download_button("Download CSV", csv_data, "mood.csv", "text/csv")
 
-# ==============================
-# FUNGSI TAMBAH MOOD
-# ==============================
-def add_mood_entry(score, notes):
-    tanggal = datetime.now().strftime("%Y-%m-%d %H:%M")
-    mood_text = MOOD_OPTIONS[score]
+# Excel
+excel = df.to_excel("mood.xlsx", index=False)
+with open("mood.xlsx", "rb") as f:
+    st.download_button("Download Excel", f, file_name="mood.xlsx")
 
-    insert_mood(tanggal, score, mood_text, notes)
-
-    st.session_state.mood_history.insert(0, {
-        "Tanggal": tanggal,
-        "Skor": score,
-        "Mood": mood_text,
-        "Catatan": notes
-    })
-
-    st.toast(f"Mood hari ini ({mood_text}) berhasil dicatat!")
-
-
-# ==============================
-# UI UTAMA
-# ==============================
-st.title(" WarasNesia — Mood Tracker Harian")
-st.markdown("Aplikasi sederhana untuk mencatat dan melacak suasana hati Anda.")
-st.markdown("---")
-
-
-# ==============================
-# 1. Form Input Mood
-# ==============================
-st.header("1. Catat Mood Anda Sekarang")
-
-with st.form("mood_form", clear_on_submit=True):
-    st.markdown("**Bagaimana perasaan Anda hari ini?**")
-
-    selected_score = st.select_slider(
-        ' ',
-        options=mood_list,
-        value=3,
-        format_func=lambda x: MOOD_OPTIONS[x]
-    )
-
-    notes = st.text_area("Tuliskan sedikit tentang hari Anda (opsional):")
-
-    submitted = st.form_submit_button(" Simpan Mood", type="primary")
-
-    if submitted:
-        add_mood_entry(selected_score, notes)
-
-
-st.markdown("---")
-
-
-# ==============================
-# 2. RIWAYAT TREND
-# ==============================
-st.header("2. Riwayat Tren Mood")
-
-if st.session_state.mood_history:
-    df = pd.DataFrame(st.session_state.mood_history)
-
-    st.subheader("Tren Mood (Skor)")
-    df['Tanggal'] = pd.to_datetime(df['Tanggal'])
-    df_chart = df.set_index('Tanggal')
-
-    st.line_chart(df_chart['Skor'])
-
-    st.subheader("Semua Catatan")
-    st.dataframe(df, use_container_width=True)
-
-else:
-    st.info("Belum ada catatan mood. Silakan catat mood Anda di atas.")
-    st.write("Cek jika mood anda tidak stabil")
-    if st.button("Cek Gejala Penyakit"):
-        st.switch_page("pages/page_a.py")
-
-
-# ==============================
-# EXPORT DATA
-# ==============================
-st.subheader("Export Data Mood")
-
-df_export = pd.DataFrame(st.session_state.mood_history)
-
-col1, col2, col3 = st.columns(3)
-
-# --- CSV ---
-with col1:
-    st.download_button(
-        label="Download CSV",
-        data=df_export.to_csv(index=False).encode('utf-8'),
-        file_name="mood_history.csv",
-        mime="text/csv"
-    )
-
-# --- Excel ---
-with col2:
-    excel_path = "mood_history.xlsx"
-    df_export.to_excel(excel_path, index=False)
-
-    with open(excel_path, "rb") as f:
-        st.download_button(
-            label="Download Excel",
-            data=f,
-            file_name="mood_history.xlsx",
-            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        )
-
-# --- PDF ---
-with col3:
-
-    def generate_pdf(df):
-        pdf_path = "mood_history.pdf"
-        doc = SimpleDocTemplate(pdf_path, pagesize=A4)
-
-        style = getSampleStyleSheet()
-        title = Paragraph("Riwayat Mood Harian", style["Title"])
-
-        # Header tabel + isi
-        data = [list(df.columns)] + df.values.tolist()
-
-        table = Table(data, colWidths=[120, 60, 100, 180])
-        table.setStyle(TableStyle([
-            ('BACKGROUND', (0,0), (-1,0), colors.lightblue),
-            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-            ('ALIGN', (0,0), (-1,-1), 'LEFT'),
-            ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-            ('FONTSIZE', (0,0), (-1,-1), 10),
-        ]))
-
-        doc.build([title, table])
-        return pdf_path
-
-
-    pdf_file = generate_pdf(df_export)
-
-    with open(pdf_file, "rb") as f:
-        st.download_button(
-            label="Download PDF",
-            data=f,
-            file_name="mood_history.pdf",
-            mime="application/pdf"
-        )
-
-
-# ==============================
-# KEMBALI
-# ==============================
-if st.button("⬅️ Kembali "):
-    st.switch_page("pages/page2.py")
-
+# JSON
+json_data = df.to_json(orient="records").encode("utf-8")
+st.download_button("Download JSON", json_data, "mood.json", "application/json")
