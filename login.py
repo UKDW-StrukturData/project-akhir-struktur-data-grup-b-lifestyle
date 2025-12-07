@@ -28,9 +28,7 @@
 
 import streamlit as st
 import sqlite3
-from apikey import token
 
-st.session_state['api'] = token 
 
 conn = sqlite3.connect("users.db", check_same_thread=False)
 cur = conn.cursor()

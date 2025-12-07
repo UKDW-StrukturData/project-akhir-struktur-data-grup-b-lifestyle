@@ -8,7 +8,8 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.warning("Silakan login terlebih dahulu!")
     st.stop()
 
-token = st.session_state['api']
+token = st.secrets["GKEY"]
+
 genai.configure(api_key=token)
 
 
