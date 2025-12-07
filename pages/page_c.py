@@ -8,6 +8,9 @@ from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
 
+# ==============================
+#  DATABASE (TANPA FILE BARU)
+# ==============================
 def get_conn():
     return sqlite3.connect("users.db")
 
@@ -45,15 +48,20 @@ def load_mood():
     return rows
 
 
+# ==============================
+# STREAMLIT PAGE CONFIG
+# ==============================
 st.set_page_config(
     page_title="WarasNesia - Mood Tracker",
     layout="wide"
 )
 
-init_db()  
+init_db()  # penting!
 
 
-
+# ==============================
+# LOAD DATABASE KE SESSION_STATE
+# ==============================
 db_rows = load_mood()
 
 st.session_state.mood_history = [
@@ -62,6 +70,9 @@ st.session_state.mood_history = [
 ]
 
 
+# ==============================
+# MOOD OPTIONS
+# ==============================
 MOOD_OPTIONS = {
     1: "😔 Sangat Buruk",
     2: "😟 Buruk",
@@ -72,6 +83,9 @@ MOOD_OPTIONS = {
 mood_list = list(MOOD_OPTIONS.keys())
 
 
+# ==============================
+# FUNGSI TAMBAH MOOD
+# ==============================
 def add_mood_entry(score, notes):
     tanggal = datetime.now().strftime("%Y-%m-%d %H:%M")
     mood_text = MOOD_OPTIONS[score]
@@ -88,11 +102,17 @@ def add_mood_entry(score, notes):
     st.toast(f"Mood hari ini ({mood_text}) berhasil dicatat!")
 
 
+# ==============================
+# UI UTAMA
+# ==============================
 st.title(" WarasNesia — Mood Tracker Harian")
 st.markdown("Aplikasi sederhana untuk mencatat dan melacak suasana hati Anda.")
 st.markdown("---")
 
 
+# ==============================
+# 1. Form Input Mood
+# ==============================
 st.header("1. Catat Mood Anda Sekarang")
 
 with st.form("mood_form", clear_on_submit=True):
@@ -116,21 +136,19 @@ with st.form("mood_form", clear_on_submit=True):
 st.markdown("---")
 
 
+# ==============================
+# 2. RIWAYAT TREND
+# ==============================
 st.header("2. Riwayat Tren Mood")
 
 if st.session_state.mood_history:
     df = pd.DataFrame(st.session_state.mood_history)
 
-    st.subheader("Statistik Mood (Bar Chart)")
+    st.subheader("Tren Mood (Skor)")
+    df['Tanggal'] = pd.to_datetime(df['Tanggal'])
+    df_chart = df.set_index('Tanggal')
 
-    mood_count = df['Skor'].value_counts().reindex([1, 2, 3, 4, 5], fill_value=0)
-
-    df_bar = pd.DataFrame({
-        "Mood": ["Sangat Buruk", "Buruk", "Cukup", "Baik", "Sangat Baik"],
-        "Jumlah": mood_count.values
-    })
-
-    st.bar_chart(df_bar.set_index("Mood"))
+    st.line_chart(df_chart['Skor'])
 
     st.subheader("Semua Catatan")
     st.dataframe(df, use_container_width=True)
@@ -142,44 +160,78 @@ else:
         st.switch_page("pages/page_a.py")
 
 
-st.subheader("Export Data (PDF Only)")
+# ==============================
+# EXPORT DATA
+# ==============================
+st.subheader("Export Data Mood")
 
 df_export = pd.DataFrame(st.session_state.mood_history)
 
+col1, col2, col3 = st.columns(3)
 
-def generate_pdf(df):
-    pdf_path = "mood_history.pdf"
-    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
-
-    style = getSampleStyleSheet()
-    title = Paragraph("Riwayat Mood Harian", style["Title"])
-
-    data = [list(df.columns)] + df.values.tolist()
-
-    table = Table(data, colWidths=[120, 60, 100, 180])
-    table.setStyle(TableStyle([
-        ('BACKGROUND', (0,0), (-1,0), colors.lightblue),
-        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
-        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
-        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
-        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
-        ('FONTSIZE', (0,0), (-1,-1), 10),
-    ]))
-
-    doc.build([title, table])
-    return pdf_path
-
-
-pdf_file = generate_pdf(df_export)
-
-with open(pdf_file, "rb") as f:
+# --- CSV ---
+with col1:
     st.download_button(
-        label="Download PDF",
-        data=f,
-        file_name="mood_history.pdf",
-        mime="application/pdf"
+        label="Download CSV",
+        data=df_export.to_csv(index=False).encode('utf-8'),
+        file_name="mood_history.csv",
+        mime="text/csv"
     )
 
+# --- Excel ---
+with col2:
+    excel_path = "mood_history.xlsx"
+    df_export.to_excel(excel_path, index=False)
 
+    with open(excel_path, "rb") as f:
+        st.download_button(
+            label="Download Excel",
+            data=f,
+            file_name="mood_history.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+        )
+
+# --- PDF ---
+with col3:
+
+    def generate_pdf(df):
+        pdf_path = "mood_history.pdf"
+        doc = SimpleDocTemplate(pdf_path, pagesize=A4)
+
+        style = getSampleStyleSheet()
+        title = Paragraph("Riwayat Mood Harian", style["Title"])
+
+        # Header tabel + isi
+        data = [list(df.columns)] + df.values.tolist()
+
+        table = Table(data, colWidths=[120, 60, 100, 180])
+        table.setStyle(TableStyle([
+            ('BACKGROUND', (0,0), (-1,0), colors.lightblue),
+            ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+            ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+            ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+            ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+            ('FONTSIZE', (0,0), (-1,-1), 10),
+        ]))
+
+        doc.build([title, table])
+        return pdf_path
+
+
+    pdf_file = generate_pdf(df_export)
+
+    with open(pdf_file, "rb") as f:
+        st.download_button(
+            label="Download PDF",
+            data=f,
+            file_name="mood_history.pdf",
+            mime="application/pdf"
+        )
+
+
+# ==============================
+# KEMBALI
+# ==============================
 if st.button("⬅️ Kembali "):
     st.switch_page("pages/page2.py")
+
