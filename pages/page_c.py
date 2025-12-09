@@ -2,12 +2,12 @@ import streamlit as st
 from datetime import datetime
 import pandas as pd
 import sqlite3
-import base64
+from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.lib import colors
 
 
-# ==============================
-#  DATABASE
-# ==============================
 def get_conn():
     return sqlite3.connect("users.db")
 
@@ -45,20 +45,15 @@ def load_mood():
     return rows
 
 
-# ==============================
-# STREAMLIT CONFIG
-# ==============================
 st.set_page_config(
     page_title="WarasNesia - Mood Tracker",
     layout="wide"
 )
 
-init_db()
+init_db()  
 
 
-# ==============================
-# LOAD DATA
-# ==============================
+
 db_rows = load_mood()
 
 st.session_state.mood_history = [
@@ -67,9 +62,6 @@ st.session_state.mood_history = [
 ]
 
 
-# ==============================
-# MOOD OPTIONS
-# ==============================
 MOOD_OPTIONS = {
     1: "😔 Sangat Buruk",
     2: "😟 Buruk",
@@ -80,9 +72,6 @@ MOOD_OPTIONS = {
 mood_list = list(MOOD_OPTIONS.keys())
 
 
-# ==============================
-# ADD MOOD FUNCTION
-# ==============================
 def add_mood_entry(score, notes):
     tanggal = datetime.now().strftime("%Y-%m-%d %H:%M")
     mood_text = MOOD_OPTIONS[score]
@@ -99,17 +88,11 @@ def add_mood_entry(score, notes):
     st.toast(f"Mood hari ini ({mood_text}) berhasil dicatat!")
 
 
-# ==============================
-# UI
-# ==============================
 st.title(" WarasNesia — Mood Tracker Harian")
 st.markdown("Aplikasi sederhana untuk mencatat dan melacak suasana hati Anda.")
 st.markdown("---")
 
 
-# ==============================
-# FORM INPUT MOOD
-# ==============================
 st.header("1. Catat Mood Anda Sekarang")
 
 with st.form("mood_form", clear_on_submit=True):
@@ -129,18 +112,17 @@ with st.form("mood_form", clear_on_submit=True):
     if submitted:
         add_mood_entry(selected_score, notes)
 
+
 st.markdown("---")
 
 
-# ==============================
-# TREND & HISTORY
-# ==============================
 st.header("2. Riwayat Tren Mood")
 
 if st.session_state.mood_history:
     df = pd.DataFrame(st.session_state.mood_history)
 
     st.subheader("Statistik Mood (Bar Chart)")
+
     mood_count = df['Skor'].value_counts().reindex([1, 2, 3, 4, 5], fill_value=0)
 
     df_bar = pd.DataFrame({
@@ -160,33 +142,44 @@ else:
         st.switch_page("pages/page_a.py")
 
 
-# ==============================
-# EXPORT PDF SAJA (TANPA REPORTLAB)
-# ==============================
-st.subheader("Export Data Mood")
+st.subheader("Export Data (PDF Only)")
+
 df_export = pd.DataFrame(st.session_state.mood_history)
 
-def create_pdf_download_link(df):
-    html = f"""
-    <h1>Riwayat Mood Harian</h1>
-    {df.to_html(index=False)}
-    """
 
-    b64 = base64.b64encode(html.encode()).decode()
+def generate_pdf(df):
+    pdf_path = "mood_history.pdf"
+    doc = SimpleDocTemplate(pdf_path, pagesize=A4)
 
-    return f"""
-    <a href="data:application/pdf;base64,{b64}"
-       download="mood_history.pdf"
-       style="background:#4CAF50;padding:10px 18px;color:white;border-radius:8px;text-decoration:none;font-weight:bold;">
-       📄 Download PDF
-    </a>
-    """
+    style = getSampleStyleSheet()
+    title = Paragraph("Riwayat Mood Harian", style["Title"])
 
-st.markdown(create_pdf_download_link(df_export), unsafe_allow_html=True)
+    data = [list(df.columns)] + df.values.tolist()
+
+    table = Table(data, colWidths=[120, 60, 100, 180])
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0,0), (-1,0), colors.lightblue),
+        ('TEXTCOLOR', (0,0), (-1,0), colors.white),
+        ('ALIGN', (0,0), (-1,-1), 'LEFT'),
+        ('GRID', (0,0), (-1,-1), 0.5, colors.grey),
+        ('FONTNAME', (0,0), (-1,0), 'Helvetica-Bold'),
+        ('FONTSIZE', (0,0), (-1,-1), 10),
+    ]))
+
+    doc.build([title, table])
+    return pdf_path
 
 
-# ==============================
-# BUTTON KEMBALI
-# ==============================
+pdf_file = generate_pdf(df_export)
+
+with open(pdf_file, "rb") as f:
+    st.download_button(
+        label="Download PDF",
+        data=f,
+        file_name="mood_history.pdf",
+        mime="application/pdf"
+    )
+
+
 if st.button("⬅️ Kembali "):
     st.switch_page("pages/page2.py")
