@@ -127,5 +127,5 @@ if st.button("Simpan & Analisis"):
 
 
 
-if st.button("Kembali ke Halaman Utama"):
+if st.button("⬅️ Kembali"):
     st.switch_page("pages/page2.py")
