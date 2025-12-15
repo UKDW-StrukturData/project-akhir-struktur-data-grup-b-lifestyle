@@ -49,7 +49,7 @@ with right_col:
 
     st.markdown("<br>", unsafe_allow_html=True)
 
-     if st.button("Cek Kesehatan Harian", use_container_width=True):
+    if st.button("Cek Kesehatan Harian", use_container_width=True):
         st.switch_page("pages/nutrisi.py")
 
 
