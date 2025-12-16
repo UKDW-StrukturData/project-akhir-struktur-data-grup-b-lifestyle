@@ -55,9 +55,6 @@ with col1:
                     c2.metric("🥩 Protein", f"{nutriments.get('proteins_100g', 0)} g")
                     c2.metric("🧂 Garam", f"{nutriments.get('salt_100g', 0)} g")
 
-                    st.subheader("🏷️ Nutri-Score")
-                    st.write(product.get("nutriscore_grade", "-").upper())
-
                 else:
                     st.error("Produk tidak ditemukan")
 
