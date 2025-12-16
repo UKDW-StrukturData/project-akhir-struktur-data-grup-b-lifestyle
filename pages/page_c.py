@@ -7,7 +7,6 @@ from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib import colors
 
-
 if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.warning("Silakan login terlebih dahulu.")
     st.stop()
@@ -19,7 +18,7 @@ st.set_page_config(
     layout="wide"
 )
 
-#sort
+
 def quick_sort(data, key):
     if len(data) <= 1:
         return data
@@ -87,8 +86,7 @@ st.markdown("---")
 st.header("2. Riwayat Mood")
 
 if st.session_state["mood_history"]:
-    
-    # -------- DISPLAY DATA --------
+
     display_data = st.session_state.get(
         "sorted_history",
         st.session_state["mood_history"]
@@ -96,7 +94,6 @@ if st.session_state["mood_history"]:
 
     df = pd.DataFrame(display_data)
 
-   
     st.subheader("Statistik Mood")
 
     mood_count = (
@@ -111,8 +108,8 @@ if st.session_state["mood_history"]:
     })
 
     st.bar_chart(df_bar.set_index("Mood"))
-    
-    st.subheader("Urutkan Data Mood")
+
+    st.subheader("Urutkan Data Mood (Quick Sort)")
 
     col1, col2, col3 = st.columns(3)
 
@@ -123,22 +120,28 @@ if st.session_state["mood_history"]:
             )
 
     with col2:
-        if st.button("⬇ Skor dari Tertinggi"):
+        if st.button("⬇ Skor dari Tertinggi "):
             st.session_state["sorted_history"] = quick_sort(
                 st.session_state["mood_history"], "Skor"
             )[::-1]
 
     with col3:
-        if st.button("Reset Urutan"):
+        if st.button(" Reset Urutan"):
             st.session_state.pop("sorted_history", None)
 
-    # TABLE 
+
     st.subheader("Semua Catatan")
+
+    display_data = st.session_state.get(
+        "sorted_history",
+        st.session_state["mood_history"]
+    )
+
+    df = pd.DataFrame(display_data)
     st.dataframe(df, use_container_width=True)
 
 else:
     st.info("Belum ada data mood.")
-
 
 def generate_pdf(df):
     if df.empty:
