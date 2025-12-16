@@ -11,13 +11,18 @@ if "logged_in" not in st.session_state or not st.session_state["logged_in"]:
     st.warning("Silakan login terlebih dahulu.")
     st.stop()
 
-username = st.session_state["username"]
+username = st.session_state.get("username", "Pengguna")
 
-st.set_page_config(page_title="WarasNesia - Mood Tracker", layout="wide")
+st.set_page_config(
+    page_title="WarasNesia - Mood Tracker",
+    layout="wide"
+)
 
 init_mood_table()
 
 rows = load_mood(username)
+
+# LIST OF DICTIONARY (STRUKTUR DATA UTAMA)
 st.session_state["mood_history"] = [
     {"Tanggal": r[0], "Skor": r[1], "Mood": r[2], "Catatan": r[3]}
     for r in rows
@@ -34,7 +39,6 @@ MOOD_OPTIONS = {
 st.title(f"Mood Tracker — {username}")
 st.markdown("---")
 
-# INPUT MOOD
 st.header("1. Catat Mood Anda Sekarang")
 
 with st.form("mood_form", clear_on_submit=True):
@@ -55,6 +59,7 @@ with st.form("mood_form", clear_on_submit=True):
 
         insert_mood(username, tanggal, score, mood_text, notes)
 
+        # STACK (LIFO) → data terbaru di depan
         st.session_state["mood_history"].insert(0, {
             "Tanggal": tanggal,
             "Skor": score,
@@ -66,7 +71,6 @@ with st.form("mood_form", clear_on_submit=True):
 
 st.markdown("---")
 
-# BAR CHART + TABEL
 st.header("2. Riwayat Mood")
 
 if st.session_state["mood_history"]:
@@ -74,7 +78,11 @@ if st.session_state["mood_history"]:
 
     st.subheader("Statistik Mood")
 
-    mood_count = df["Skor"].value_counts().reindex([1, 2, 3, 4, 5], fill_value=0)
+    mood_count = (
+        df["Skor"]
+        .value_counts()
+        .reindex([1, 2, 3, 4, 5], fill_value=0)
+    )
 
     df_bar = pd.DataFrame({
         "Mood": ["Sangat Buruk", "Buruk", "Biasa", "Baik", "Sangat Baik"],
@@ -89,8 +97,10 @@ if st.session_state["mood_history"]:
 else:
     st.info("Belum ada data mood.")
 
-# EXPORT PDF
 def generate_pdf(df):
+    if df.empty:
+        return None  # ⬅️ PENTING
+
     pdf_path = "mood_history.pdf"
     doc = SimpleDocTemplate(pdf_path, pagesize=A4)
     style = getSampleStyleSheet()
@@ -109,15 +119,21 @@ def generate_pdf(df):
     return pdf_path
 
 df_export = pd.DataFrame(st.session_state["mood_history"])
-pdf = generate_pdf(df_export)
 
-with open(pdf, "rb") as f:
-    st.download_button(
-        "Download PDF",
-        f,
-        file_name="mood_history.pdf",
-        mime="application/pdf"
-    )
+if df_export.empty:
+    st.info("Belum ada data mood untuk di-export ke PDF.")
+else:
+    pdf = generate_pdf(df_export)
 
-if st.button("⬅️ Kembali"):
+    if pdf:
+        with open(pdf, "rb") as f:
+            st.download_button(
+                "Download PDF",
+                f,
+                file_name="mood_history.pdf",
+                mime="application/pdf",
+                key="btn_download_pdf"
+            )
+
+if st.button("⬅️ Kembali", key="btn_kembali"):
     st.switch_page("pages/page2.py")
